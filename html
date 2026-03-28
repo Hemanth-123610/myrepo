@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QA Buddy</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1100px;
+      margin: 40px auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 42px;
+      color: #38bdf8;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: #cbd5e1;
+      font-size: 18px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 25px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      margin-bottom: 25px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #e2e8f0;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      font-size: 15px;
+      background: #f8fafc;
+      color: #111827;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 130px;
+    }
+
+    .full {
+      margin-top: 20px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 12px 22px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .primary {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+
+    .primary:hover {
+      background: #0ea5e9;
+    }
+
+    .secondary {
+      background: #22c55e;
+      color: white;
+    }
+
+    .secondary:hover {
+      background: #16a34a;
+    }
+
+    .danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .danger:hover {
+      background: #dc2626;
+    }
+
+    .output-box {
+      background: #0f172a;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 18px;
+      border-radius: 14px;
+      min-height: 220px;
+      white-space: pre-wrap;
+      color: #e2e8f0;
+      line-height: 1.6;
+      margin-top: 15px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .feature {
+      background: rgba(255,255,255,0.06);
+      padding: 18px;
+      border-radius: 14px;
+      text-align: center;
+    }
+
+    .feature h3 {
+      color: #38bdf8;
+      margin-bottom: 10px;
+    }
+
+    .feature p {
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .row,
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .header h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>QA Buddy</h1>
+      <p>AI Powered Testing Assistant for Manual & Automation QA</p>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <label for="projectName">Project Name</label>
+          <input type="text" id="projectName" placeholder="Enter project name" />
+        </div>
+
+        <div>
+          <label for="mode">Select Mode</label>
+          <select id="mode">
+            <option value="manual">Manual Testing</option>
+            <option value="automation">Automation Testing</option>
+            <option value="bug">Bug Detection</option>
+            <option value="testcase">Generate Test Cases</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="full">
+        <label for="requirement">Enter Requirement / Scenario</label>
+        <textarea id="requirement" placeholder="Example: Verify login page with valid and invalid credentials"></textarea>
+      </div>
+
+      <div class="buttons">
+        <button class="primary" onclick="generateOutput()">Generate</button>
+        <button class="secondary" onclick="loadSample()">Load Sample</button>
+        <button class="danger" onclick="clearForm()">Clear</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <label>Generated Output</label>
+      <div class="output-box" id="output">
+Your QA Buddy response will appear here...
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <h3>Manual Testing</h3>
+        <p>Create test scenarios, expected results, and validation points quickly.</p>
+      </div>
+
+      <div class="feature">
+        <h3>Automation Support</h3>
+        <p>Generate Selenium or Playwright style testing steps for execution.</p>
+      </div>
+
+      <div class="feature">
+        <h3>Bug Analysis</h3>
+        <p>Understand possible issues, edge cases, and defect areas from requirements.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function generateOutput() {
+      const projectName = document.getElementById("projectName").value.trim();
+      const mode = document.getElementById("mode").value;
+      const requirement = document.getElementById("requirement").value.trim();
+      const output = document.getElementById("output");
+
+      if (!projectName || !requirement) {
+        output.textContent = "Please enter project name and requirement first.";
+        return;
+      }
+
+      let result = "";
+
+      if (mode === "manual") {
+        result =
+`Project: ${projectName}
+
+Mode: Manual Testing
+
+Generated Manual Test Scenario:
+1. Open the application.
+2. Navigate to the relevant module.
+3. Enter valid and invalid inputs.
+4. Verify expected behavior.
+5. Validate error messages.
+6. Confirm UI, functionality, and usability.
+
+Requirement:
+${requirement}
+
+Expected Result:
+System should work as per business requirement without errors.`;
+      } 
+      else if (mode === "automation") {
+        result =
+`Project: ${projectName}
+
+Mode: Automation Testing
+
+Suggested Automation Steps:
+1. Launch browser
+2. Open application URL
+3. Locate elements
+4. Perform actions
+5. Validate results using assertions
+6. Capture screenshots on failure
+
+Requirement:
+${requirement}
+
+Recommended Tool:
+Selenium / Playwright`;
+      } 
+      else if (mode === "bug") {
+        result =
+`Project: ${projectName}
+
+Mode: Bug Detection
+
+Possible Bug Areas:
+- Input validation issues
+- Broken navigation
+- Incorrect error messages
+- UI alignment problems
+- Backend response mismatch
+- Performance delays
+
+Requirement:
+${requirement}
+
+Suggestion:
+Test positive, negative, boundary, and edge case scenarios.`;
+      } 
+      else if (mode === "testcase") {
+        result =
+`Project: ${projectName}
+
+Mode: Generate Test Cases
+
+Sample Test Cases:
+TC001 - Verify functionality with valid input
+TC002 - Verify functionality with invalid input
+TC003 - Verify mandatory field validation
+TC004 - Verify system response for boundary values
+TC005 - Verify UI and error handling
+
+Requirement:
+${requirement}`;
+      }
+
+      output.textContent = result;
+    }
+
+    function clearForm() {
+      document.getElementById("projectName").value = "";
+      document.getElementById("mode").value = "manual";
+      document.getElementById("requirement").value = "";
+      document.getElementById("output").textContent = "Your QA Buddy response will appear here...";
+    }
+
+    function loadSample() {
+      document.getElementById("projectName").value = "MyCompetency";
+      document.getElementById("mode").value = "testcase";
+      document.getElementById("requirement").value = "Verify user can log in with valid credentials and proper error message is shown for invalid credentials.";
+      document.getElementById("output").textContent = "Sample data loaded. Click Generate.";
+    }
+  </script>
+</body>
+</html>
